@@ -1,6 +1,7 @@
 import React from "react";
 import Aux from "../../hoc/Auxiliary";
 import classes from "./Layout.module.css";
+import Toolbar from "../Navigation/Toolbar/Toolbar";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface LayoutProps {
 const Layout = (props: LayoutProps) => {
   return (
     <Aux>
-      <div>Toolbar</div>
+      <Toolbar />
       <main className={classes.Content}>{props.children}</main>
     </Aux>
   );

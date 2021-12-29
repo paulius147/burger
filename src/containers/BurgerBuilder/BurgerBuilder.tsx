@@ -17,6 +17,7 @@ interface BurgerBuilderState {
   ingredients: IngredientsType;
   totalPrice: number;
   purchasable: boolean;
+  purchasing: boolean;
 }
 
 export interface DisabledInfo {
@@ -50,6 +51,7 @@ class BurgerBuilder extends Component {
     },
     totalPrice: 4,
     purchasable: false,
+    purchasing: false,
   };
 
   updatePurchaseState(ingredients: IngredientsType): void {
@@ -69,7 +71,6 @@ class BurgerBuilder extends Component {
     const priceAddition = INGREDIENT_PRICES[type];
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice + priceAddition;
-    console.log(newPrice);
     this.setState({
       ingredients: updatedIngredients,
       totalPrice: newPrice,
@@ -98,6 +99,18 @@ class BurgerBuilder extends Component {
     this.updatePurchaseState(updatedIngredients);
   };
 
+  purchaseHandler = () => {
+    this.setState({ purchasing: true });
+  };
+
+  purchaseCancelHandler = () => {
+    this.setState({ purchasing: false });
+  };
+
+  purchaseContinueHandler = () => {
+    alert("continue");
+  };
+
   render() {
     const disabledInfo: DisabledInfo = {
       ...DISABLED_INFO,
@@ -107,8 +120,16 @@ class BurgerBuilder extends Component {
     }
     return (
       <Aux>
-        <Modal>
-          <OrderSummary ingredients={this.state.ingredients} />
+        <Modal
+          show={this.state.purchasing}
+          modalClosed={this.purchaseCancelHandler}
+        >
+          <OrderSummary
+            ingredients={this.state.ingredients}
+            purchaseCanceled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler}
+            price={this.state.totalPrice}
+          />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls
@@ -117,6 +138,7 @@ class BurgerBuilder extends Component {
           disabled={disabledInfo}
           price={this.state.totalPrice}
           purchasable={this.state.purchasable}
+          ordered={this.purchaseHandler}
         />
       </Aux>
     );
