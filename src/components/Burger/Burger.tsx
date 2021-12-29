@@ -1,9 +1,9 @@
 import React from "react";
 import classes from "./Burger.module.css";
 import BurgerIngredient from "./BurgerIngredient/BurgerIngredient";
-import { Ingredient } from "../../containers/BurgerBuilder/BurgerBuilder";
+import { IngredientsType } from "../../containers/BurgerBuilder/BurgerBuilder";
 interface BurgerProps {
-  [ingredient: string]: Ingredient;
+  ingredients: IngredientsType;
 }
 
 const Burger = (props: BurgerProps) => {

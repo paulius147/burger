@@ -1,12 +1,22 @@
 import React from "react";
 import classes from "./BuildControls.module.css";
 import BuildControl from "./BuildControl/BuildControl";
+import { DisabledInfo } from "../../../containers/BurgerBuilder/BurgerBuilder";
 
 interface BuildProps {
-  ingredientAdded: any;
+  ingredientAdded(type: string): void;
+  ingredientRemoved(type: string): void;
+  disabled: DisabledInfo;
+  price: number;
+  purchasable: boolean;
 }
 
-const controls = [
+interface Control {
+  label: string;
+  type: string;
+}
+
+const controls: Control[] = [
   { label: "Salad", type: "salad" },
   { label: "Bacon", type: "bacon" },
   { label: "Cheese", type: "cheese" },
@@ -14,12 +24,23 @@ const controls = [
 ];
 
 const BuildControls = (props: BuildProps) => {
-  props.ingredientAdded("cheese");
   return (
     <div className={classes.BuildControls}>
+      <p>
+        Current price: <strong>{props.price.toFixed(2)}</strong>
+      </p>
       {controls.map((ctrl) => (
-        <BuildControl label={ctrl.label} key={ctrl.label} />
+        <BuildControl
+          added={() => props.ingredientAdded(ctrl.type)}
+          removed={() => props.ingredientRemoved(ctrl.type)}
+          label={ctrl.label}
+          key={ctrl.label}
+          disabled={props.disabled[ctrl.type]}
+        />
       ))}
+      <button className={classes.OrderButton} disabled={!props.purchasable}>
+        ORDER NOW
+      </button>
     </div>
   );
 };
