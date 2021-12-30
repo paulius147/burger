@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Aux from "../../hoc/Auxiliary";
+import Aux from "../../hoc/Auxiliary/Auxiliary";
 import Burger from "../../components/Burger/Burger";
 import BuildControls from "../../components/Burger/BuildControls/BuildControls";
 import Modal from "../../components/UI/Modal/Modal";
@@ -13,7 +13,7 @@ export interface IngredientsType {
   [key: string]: number;
 }
 
-interface BurgerBuilderState {
+export interface BurgerBuilderState {
   ingredients: IngredientsType;
   totalPrice: number;
   purchasable: boolean;
@@ -91,7 +91,6 @@ class BurgerBuilder extends Component {
     const priceDeduction = INGREDIENT_PRICES[type];
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice - priceDeduction;
-    console.log(newPrice);
     this.setState({
       ingredients: updatedIngredients,
       totalPrice: newPrice,
