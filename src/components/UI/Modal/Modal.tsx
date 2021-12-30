@@ -12,11 +12,12 @@ interface ModalProps {
 
 class Modal extends Component<ModalProps> {
   shouldComponentUpdate(nextProps: ModalProps, nextState: BurgerBuilderState) {
-    return nextProps.show !== this.props.show;
+    return (
+      nextProps.show !== this.props.show ||
+      nextProps.children !== this.props.children
+    );
   }
-  componentDidUpdate() {
-    console.log("asd");
-  }
+
   render() {
     return (
       <Aux>
