@@ -1,41 +1,57 @@
-import { AxiosError, AxiosInstance } from "axios";
 import React, { Component } from "react";
+import { AxiosInstance, AxiosError } from "axios";
 import Modal from "../../components/UI/Modal/Modal";
 import Aux from "../Auxiliary/Auxiliary";
+import { NavigateFunction } from "react-router-dom";
 
-interface withErrorHandlerState {
-  error: AxiosError | null;
-}
+type WithErrorHandlerState = {
+  error: AxiosError | undefined;
+};
 
-const withErrorHandler = <P extends object>(
-  WrappedComponent: React.ComponentType<P>,
+type WithErrorHandlerProps = {
+  navigateTo: NavigateFunction;
+};
+
+const withErrorHandler = (
+  WrappedComponent: React.ComponentType,
   axios: AxiosInstance
-) =>
-  class WithErrorHandler extends Component<P> {
-    state: withErrorHandlerState = {
-      error: null,
+) => {
+  return class WithErrorHandler extends Component<
+    WithErrorHandlerProps,
+    WithErrorHandlerState
+  > {
+    reqInterceptor: number | undefined = undefined;
+    respInterceptor: number | undefined = undefined;
+
+    state: WithErrorHandlerState = {
+      error: undefined,
     };
 
-    UNSAFE_componentWillMount() {
-      axios.interceptors.request.use((req) => {
-        this.setState({ error: null });
+    constructor(props: WithErrorHandlerProps) {
+      super(props);
+
+      this.reqInterceptor = axios.interceptors.request.use((req) => {
+        this.setState({ error: undefined });
         return req;
       });
-      axios.interceptors.response.use(
-        (res) => res,
+      this.respInterceptor = axios.interceptors.response.use(
+        undefined,
         (error) => {
           this.setState({ error: error });
+          return Promise.reject(error);
         }
       );
     }
 
-    // componentWillUnmount() {
-    //   axios.interceptors.request.eject(this.reqInterceptor);
-    //   axios.interceptors.response.eject(this.resInterceptor);
-    // }
+    componentWillUnmount() {
+      axios.interceptors.request.eject(this.reqInterceptor as number);
+      axios.interceptors.response.eject(this.respInterceptor as number);
+    }
 
     errorConfirmHandler = () => {
-      this.setState({ error: null });
+      this.setState({
+        error: undefined,
+      });
     };
 
     render() {
@@ -47,10 +63,11 @@ const withErrorHandler = <P extends object>(
           >
             {this.state.error ? this.state.error.message : null}
           </Modal>
-          <WrappedComponent {...(this.props as P)} />
+          <WrappedComponent {...this.props} />
         </Aux>
       );
     }
   };
+};
 
 export default withErrorHandler;

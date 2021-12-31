@@ -47,6 +47,7 @@ const DISABLED_INFO: DisabledInfo = {
 };
 
 class BurgerBuilder extends Component {
+  props: any;
   state: BurgerBuilderState = {
     ingredients: null,
     totalPrice: 4,
@@ -127,24 +128,26 @@ class BurgerBuilder extends Component {
 
   purchaseContinueHandler = () => {
     this.setState({ loading: true });
-    const order = {
-      ingredients: this.state.ingredients,
-      price: this.state.totalPrice,
-      customer: {
-        name: "Paulius",
-        address: {
-          street: "Teststreet 1",
-          zipCode: "48624",
-          country: "LT",
-        },
-        email: "test@test.com",
-      },
-      deliveryMethod: "fastest",
-    };
-    axios
-      .post("/orders.json", order)
-      .then((response) => this.setState({ loading: false, purchasing: false }))
-      .catch((err) => this.setState({ loading: false, purchasing: false }));
+    // const order = {
+    //   ingredients: this.state.ingredients,
+    //   price: this.state.totalPrice,
+    //   customer: {
+    //     name: "Paulius",
+    //     address: {
+    //       street: "Teststreet 1",
+    //       zipCode: "48624",
+    //       country: "LT",
+    //     },
+    //     email: "test@test.com",
+    //   },
+    //   deliveryMethod: "fastest",
+    // };
+    // axios
+    //   .post("/orders.json", order)
+    //   .then((response) => this.setState({ loading: false, purchasing: false }))
+    //   .catch((err) => this.setState({ loading: false, purchasing: false }));
+    // this.props.history.push("/checkout");
+    this.props.navigateTo("/checkout");
   };
 
   render() {
@@ -205,3 +208,109 @@ class BurgerBuilder extends Component {
 }
 
 export default withErrorHandler(BurgerBuilder, axios);
+
+// const BurgerBuilder = () => {
+//   const [ingredients, setIngredients] = useState<IngredientsType | null>(null);
+//   const [totalPrice, setTotalPrice] = useState(4);
+//   const [purchasable, setPurchasable] = useState(false);
+//   const [purchasing, setPurchasing] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState(false);
+
+//   useEffect(() => {
+//     axios
+//       .get(
+//         "https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json"
+//       )
+//       .then((response) => {
+//         setIngredients(response.data);
+//       })
+//       .catch((err) => {
+//         setError(true);
+//       });
+//   }, []);
+
+//   const updatePurchaseState = (ingredients: IngredientsType): void => {
+//     const sum = Object.keys(ingredients)
+//       .map((igKey) => ingredients[igKey])
+//       .reduce((sum, el) => sum + el, 0);
+//     setPurchasable(sum > 0);
+//   };
+
+//   const addIngredientHandler = (type: string): void => {
+//     if (ingredients) {
+//       const oldCount = ingredients[type];
+//       const updatedCount = oldCount + 1;
+//       const updatedIngredients = {
+//         ...ingredients,
+//       };
+//       updatedIngredients[type] = updatedCount;
+//       const priceAddition = INGREDIENT_PRICES[type];
+//       const oldPrice = totalPrice;
+//       const newPrice = oldPrice + priceAddition;
+//       setIngredients(updatedIngredients);
+//       setTotalPrice(newPrice);
+//       updatePurchaseState(updatedIngredients);
+//     }
+//   };
+
+//   const removeIngredientHandler = (type: string): void => {
+//     if (ingredients) {
+//       const oldCount = ingredients[type];
+//       if (oldCount <= 0) {
+//         return;
+//       }
+//       const updatedCount = oldCount - 1;
+//       const updatedIngredients = {
+//         ...ingredients,
+//       };
+//       updatedIngredients[type] = updatedCount;
+//       const priceDeduction = INGREDIENT_PRICES[type];
+//       const oldPrice = totalPrice;
+//       const newPrice = oldPrice - priceDeduction;
+//       setIngredients(updatedIngredients);
+//       setTotalPrice(newPrice);
+//       updatePurchaseState(updatedIngredients);
+//     }
+//   };
+
+//   const purchaseHandler = () => {
+//     setPurchasing(true);
+//   };
+
+//   const purchaseCancelHandler = () => {
+//     setPurchasing(false);
+//   };
+
+//   // const navigate = (place: string) => {
+//   //   const navigateTo = useNavigate();
+//   //   navigateTo(place);
+//   // };
+
+//   const purchaseContinueHandler = () => {
+//     setLoading(true);
+//     // const order = {
+//     //   ingredients: this.state.ingredients,
+//     //   price: this.state.totalPrice,
+//     //   customer: {
+//     //     name: "Paulius",
+//     //     address: {
+//     //       street: "Teststreet 1",
+//     //       zipCode: "48624",
+//     //       country: "LT",
+//     //     },
+//     //     email: "test@test.com",
+//     //   },
+//     //   deliveryMethod: "fastest",
+//     // };
+//     // axios
+//     //   .post("/orders.json", order)
+//     //   .then((response) => this.setState({ loading: false, purchasing: false }))
+//     //   .catch((err) => this.setState({ loading: false, purchasing: false }));
+//     // this.props.history.push("/checkout");
+//   };
+
+//   return <div></div>;
+// };
+
+// export default BurgerBuilder;
