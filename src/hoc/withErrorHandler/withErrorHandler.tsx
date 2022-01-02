@@ -8,13 +8,13 @@ type WithErrorHandlerState = {
   error: AxiosError | undefined;
 };
 
-type WithErrorHandlerProps = {
+interface WithErrorHandlerProps {
   navigateTo: NavigateFunction;
 };
 
 const withErrorHandler = (
   WrappedComponent: React.ComponentType,
-  axios: AxiosInstance
+  axios: AxiosInstance,
 ) => {
   return class WithErrorHandler extends Component<
     WithErrorHandlerProps,
@@ -29,7 +29,6 @@ const withErrorHandler = (
 
     constructor(props: WithErrorHandlerProps) {
       super(props);
-
       this.reqInterceptor = axios.interceptors.request.use((req) => {
         this.setState({ error: undefined });
         return req;

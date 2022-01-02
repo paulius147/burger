@@ -1,4 +1,5 @@
 import React from "react";
+import { NavigateFunction } from "react-router-dom";
 import classes from "./Button.module.css";
 
 interface ButtonProps {

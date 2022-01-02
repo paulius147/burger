@@ -7,6 +7,7 @@ import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
 import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
+import { NavigateFunction } from "react-router-dom";
 
 export interface IngredientsType {
   salad: number;
@@ -23,6 +24,10 @@ export interface BurgerBuilderState {
   purchasing: boolean;
   loading: boolean;
   error: boolean;
+}
+
+interface BurgerBuilderProps {
+  navigateTo?: NavigateFunction
 }
 
 export interface DisabledInfo {
@@ -46,8 +51,7 @@ const DISABLED_INFO: DisabledInfo = {
   bacon: true,
 };
 
-class BurgerBuilder extends Component {
-  props: any;
+class BurgerBuilder extends Component<BurgerBuilderProps> {
   state: BurgerBuilderState = {
     ingredients: null,
     totalPrice: 4,
@@ -146,8 +150,7 @@ class BurgerBuilder extends Component {
     //   .post("/orders.json", order)
     //   .then((response) => this.setState({ loading: false, purchasing: false }))
     //   .catch((err) => this.setState({ loading: false, purchasing: false }));
-    // this.props.history.push("/checkout");
-    this.props.navigateTo("/checkout");
+    this.props.navigateTo!("/checkout");
   };
 
   render() {
