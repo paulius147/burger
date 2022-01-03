@@ -27,7 +27,7 @@ export interface BurgerBuilderState {
 }
 
 interface BurgerBuilderProps {
-  navigateTo?: NavigateFunction
+  navigateTo?: NavigateFunction;
 }
 
 export interface DisabledInfo {
@@ -132,25 +132,20 @@ class BurgerBuilder extends Component<BurgerBuilderProps> {
 
   purchaseContinueHandler = () => {
     this.setState({ loading: true });
-    // const order = {
-    //   ingredients: this.state.ingredients,
-    //   price: this.state.totalPrice,
-    //   customer: {
-    //     name: "Paulius",
-    //     address: {
-    //       street: "Teststreet 1",
-    //       zipCode: "48624",
-    //       country: "LT",
-    //     },
-    //     email: "test@test.com",
-    //   },
-    //   deliveryMethod: "fastest",
-    // };
-    // axios
-    //   .post("/orders.json", order)
-    //   .then((response) => this.setState({ loading: false, purchasing: false }))
-    //   .catch((err) => this.setState({ loading: false, purchasing: false }));
-    this.props.navigateTo!("/checkout");
+    const queryParams = [];
+    for (let i in this.state.ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) +
+          "=" +
+          encodeURIComponent(this.state.ingredients[i])
+      );
+    }
+    queryParams.push("price=" + this.state.totalPrice);
+    const queryString = queryParams.join("&");
+    this.props.navigateTo!({
+      pathname: "/checkout",
+      search: "?" + queryString,
+    });
   };
 
   render() {

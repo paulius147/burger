@@ -1,26 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Burger from "../../Burger/Burger";
 import Button from "../../UI/Button/Button";
 import classes from "./CheckoutSummary.module.css";
 import { IngredientsType } from "../../../containers/BurgerBuilder/BurgerBuilder";
-import {useNavigate} from 'react-router-dom'
 
 interface CheckoutSummaryProps {
   ingredients: IngredientsType;
+  checkoutCancelled(): void;
+  checkoutContinued(): void;
 }
 
 const CheckoutSummary = (props: CheckoutSummaryProps) => {
-  const navigateTo = useNavigate()
   return (
     <div className={classes.CheckoutSummary}>
       <h1>We hope it tastes well!</h1>
       <div style={{ width: "100%", margin: "auto" }}>
         <Burger ingredients={props.ingredients} />
       </div>
-      <Button btnType="Danger" clicked={() => {}}>
+      <Button btnType="Danger" clicked={props.checkoutCancelled}>
         CANCEL
       </Button>
-      <Button btnType="Success" clicked={() => navigateTo('/')}>
+      <Button btnType="Success" clicked={props.checkoutContinued}>
         CONTINUE
       </Button>
     </div>
