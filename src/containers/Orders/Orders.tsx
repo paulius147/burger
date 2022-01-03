@@ -3,7 +3,7 @@ import Order from "../../components/Order/Order";
 import axios from "../../axios-orders";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 
-interface Order {
+interface IOrder {
   customer: {
     address: {
       country: string;
@@ -26,7 +26,7 @@ interface Order {
 
 interface OrdersState {
   loading: boolean;
-  orders: Order[];
+  orders: IOrder[];
 }
 
 class Orders extends Component {
@@ -55,7 +55,7 @@ class Orders extends Component {
   render() {
     return (
       <div>
-        {this.state.orders.map((order: Order) => {
+        {this.state.orders.map((order: IOrder) => {
           return (
             <Order
               key={order.id}

@@ -32,7 +32,7 @@ const Checkout = () => {
     }
     setIngredients(paramIngredients);
     setTotalPrice(price);
-  }, []);
+  }, [search.search]);
 
   const checkoutContinuedHandler = () => {
     navigate("/checkout/contact-data", { replace: true });

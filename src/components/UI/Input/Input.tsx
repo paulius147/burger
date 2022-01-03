@@ -1,14 +1,15 @@
 import React from "react";
 import classes from "./Input.module.css";
+import { Options, OrderConfig } from '../../../containers/Checkout/ContactData/ContactData'
 
 interface InputProps {
   elementType: string;
-  elementConfig: string;
+  elementConfig: OrderConfig | Options;
   value: string;
 }
 
 const Input = (props: InputProps) => {
-  let inputElement = null;
+  let inputElement = <input />;
 
   switch (props.elementType) {
     case "input":
@@ -16,7 +17,9 @@ const Input = (props: InputProps) => {
         <input
           className={classes.InputElement}
           {...props.elementConfig}
-          value={props.value}
+        // type={props.elementType}
+        // placeholder={props.placeholder}
+        // value={props.value}
         />
       );
       break;
@@ -25,7 +28,7 @@ const Input = (props: InputProps) => {
         <textarea
           className={classes.InputElement}
           {...props.elementConfig}
-          value={props.value}
+        // value={props.value}
         />
       );
       break;
@@ -34,15 +37,14 @@ const Input = (props: InputProps) => {
         <input
           className={classes.InputElement}
           {...props.elementConfig}
-          value={props.value}
+        // value={props.value}
         />
       );
   }
-  console.log("asd");
 
   return (
     <div className={classes.Input}>
-      <label className={classes.Label}>dasdsad</label>
+      <label className={classes.Label}></label>
       {inputElement}
     </div>
   );

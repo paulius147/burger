@@ -12,40 +12,88 @@ interface ContactDataProps {
   navigate(arg: string): void;
 }
 
-interface Options {
+interface OrderFormKey {
+  elementType: string;
+  elementConfig: OrderConfig
   value: string;
-  displayValue: string;
 }
 
-interface Key {
-  elementType: string;
-  elementConfig: {
-    type: string;
-    placeholder: string;
-  };
-  value: string;
+export interface OrderConfig {
+  type: string;
+  placeholder: string;
 }
 
 interface DeliveryMethod {
   elementType: string;
-  elementConfig: {
-    options: Options[];
-  };
+  elementConfig: Options;
   value: string;
+}
+
+interface DeliveryOptions {
+  value: string;
+  displayValue: string;
+}
+
+export interface Options {
+  options: DeliveryOptions[];
 }
 
 interface ContactDataState {
   orderForm: {
-    name: Key;
-    street: Key;
-    zipCode: Key;
-    country: Key;
-    email: Key;
+    name: OrderFormKey;
+    street: OrderFormKey;
+    zipCode: OrderFormKey;
+    country: OrderFormKey;
+    email: OrderFormKey;
     deliveryMethod: DeliveryMethod;
-    [key: string]: string | Key | DeliveryMethod;
+    [key: string]: OrderFormKey | DeliveryMethod;
   };
   loading: boolean;
 }
+
+// interface State {
+//   orderForm: IOrderForm;
+//   loading: boolean
+// }
+
+// interface IElement {
+//   id: string,
+//   config: IFormElement
+// };
+
+// export interface IOrderForm {
+//   name: IFormElement,
+//   street: IFormElement,
+//   zipCode: IFormElement,
+//   country: IFormElement,
+//   email: IFormElement,
+//   deliveryMethod: IFormElement,
+//   [key: string]: IFormElement
+// };
+
+// interface IElementConfigOption {
+//   value: string,
+//   displayValue: string
+// };
+
+// export interface IFormElement {
+//   elementType: string,
+//   elementConfig: {
+//     type?: string,
+//     placeholder?: string,
+//     options?: IElementConfigOption[],
+//   },
+//   value: string,
+
+//   // validation?: {
+//   //     required: boolean,
+//   //     minLength?: number,
+//   //     maxLength?: number,
+//   //     isEmail?: boolean,
+//   // },
+//   // valid: boolean,
+//   // touched?: boolean,
+// };
 
 class ContactData extends Component<ContactDataProps> {
   state: ContactDataState = {
@@ -138,22 +186,25 @@ class ContactData extends Component<ContactDataProps> {
         config: this.state.orderForm[key],
       });
     }
+    console.log(formElementsArray)
 
-    let form = (
+    let form: JSX.Element = (
       <form>
-        {formElementsArray.map((formElement: any) => {
-          <Input
+        {formElementsArray.map((formElement) => {
+          // console.log(Form)
+          return <Input
+            elementType={formElement.config.elementType}
             key={formElement.id}
-            elementType="input"
             elementConfig={formElement.config.elementConfig}
-            value={formElement.config.elementConfig}
+            value={formElement.config.value}
           />;
         })}
-        <Button btnType="Success" clicked={this.orderHandler}>
+        < Button btnType="Success" clicked={this.orderHandler}>
           ORDER
         </Button>
-      </form>
+      </form >
     );
+
     if (this.state.loading) {
       form = <Spinner />;
     }
