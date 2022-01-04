@@ -37,7 +37,7 @@ interface DeliveryMethod {
   elementConfig: Options;
   value: string;
   validation?: Validation;
-  valid?: boolean;
+  valid: boolean;
   touched?: boolean;
 }
 
@@ -71,6 +71,7 @@ interface ContactDataState {
     [key: string]: OrderFormKey | DeliveryMethod;
   };
   loading: boolean;
+  formIsValid: boolean;
 }
 
 class ContactData extends Component<ContactDataProps> {
@@ -152,9 +153,11 @@ class ContactData extends Component<ContactDataProps> {
           ],
         },
         value: "fastest",
+        valid: true,
       },
     },
     loading: false,
+    formIsValid: false,
   };
 
   orderHandler = (e: React.SyntheticEvent) => {
@@ -170,7 +173,6 @@ class ContactData extends Component<ContactDataProps> {
       price: this.props.price,
       orderData: formData,
     };
-    console.log(order);
     axios
       .post("/orders.json", order)
       .then((response) => {
@@ -212,9 +214,12 @@ class ContactData extends Component<ContactDataProps> {
       );
       updatedFormElement.touched = true;
     }
-    console.log(updatedFormElement);
+    let formIsValid = true;
+    for (let inputIdentifier in updatedOrderForm) {
+      formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+    }
     updatedOrderForm[inputIdentifier] = updatedFormElement;
-    this.setState({ orderForm: updatedOrderForm });
+    this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
   };
 
   render() {
@@ -244,7 +249,9 @@ class ContactData extends Component<ContactDataProps> {
             />
           );
         })}
-        <Button btnType="Success">ORDER</Button>
+        <Button disabled={!this.state.formIsValid} btnType="Success">
+          ORDER
+        </Button>
       </form>
     );
 
