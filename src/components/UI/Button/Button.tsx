@@ -3,7 +3,7 @@ import classes from "./Button.module.css";
 
 interface ButtonProps {
   children: React.ReactNode;
-  clicked(): void;
+  clicked?(): void;
   btnType: string;
 }
 

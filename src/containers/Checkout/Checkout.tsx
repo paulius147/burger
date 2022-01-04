@@ -25,14 +25,14 @@ const Checkout = () => {
     let price: number | string = 0;
     for (let param in params) {
       if (param === "price") {
-        price = params[param];
+        price = Number(params[param]).toFixed(2);
       } else {
         paramIngredients[param] = parseInt(params[param]);
       }
     }
     setIngredients(paramIngredients);
     setTotalPrice(price);
-  }, [search.search]);
+  }, []);
 
   const checkoutContinuedHandler = () => {
     navigate("/checkout/contact-data", { replace: true });

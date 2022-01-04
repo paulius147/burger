@@ -12,10 +12,19 @@ interface ContactDataProps {
   navigate(arg: string): void;
 }
 
+interface Validation {
+  required: boolean;
+  minLength?: number;
+  maxLength?: number;
+}
+
 interface OrderFormKey {
   elementType: string;
-  elementConfig: OrderConfig
+  elementConfig: OrderConfig;
   value: string;
+  validation: Validation;
+  valid: boolean;
+  touched: boolean;
 }
 
 export interface OrderConfig {
@@ -27,15 +36,28 @@ interface DeliveryMethod {
   elementType: string;
   elementConfig: Options;
   value: string;
+  validation?: Validation;
+  valid?: boolean;
+  touched?: boolean;
 }
 
-interface DeliveryOptions {
+export interface DeliveryOptions {
   value: string;
   displayValue: string;
 }
 
 export interface Options {
   options: DeliveryOptions[];
+}
+
+interface FormData {
+  country: string;
+  deliveryMethod: string;
+  email: string;
+  name: string;
+  street: string;
+  zipCode: string;
+  [key: string]: string;
 }
 
 interface ContactDataState {
@@ -51,50 +73,6 @@ interface ContactDataState {
   loading: boolean;
 }
 
-// interface State {
-//   orderForm: IOrderForm;
-//   loading: boolean
-// }
-
-// interface IElement {
-//   id: string,
-//   config: IFormElement
-// };
-
-// export interface IOrderForm {
-//   name: IFormElement,
-//   street: IFormElement,
-//   zipCode: IFormElement,
-//   country: IFormElement,
-//   email: IFormElement,
-//   deliveryMethod: IFormElement,
-//   [key: string]: IFormElement
-// };
-
-// interface IElementConfigOption {
-//   value: string,
-//   displayValue: string
-// };
-
-// export interface IFormElement {
-//   elementType: string,
-//   elementConfig: {
-//     type?: string,
-//     placeholder?: string,
-//     options?: IElementConfigOption[],
-//   },
-//   value: string,
-
-//   // validation?: {
-//   //     required: boolean,
-//   //     minLength?: number,
-//   //     maxLength?: number,
-//   //     isEmail?: boolean,
-//   // },
-//   // valid: boolean,
-//   // touched?: boolean,
-// };
-
 class ContactData extends Component<ContactDataProps> {
   state: ContactDataState = {
     orderForm: {
@@ -105,6 +83,11 @@ class ContactData extends Component<ContactDataProps> {
           placeholder: "Your Name",
         },
         value: "",
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       street: {
         elementType: "input",
@@ -113,6 +96,11 @@ class ContactData extends Component<ContactDataProps> {
           placeholder: "Street",
         },
         value: "",
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       zipCode: {
         elementType: "input",
@@ -121,6 +109,13 @@ class ContactData extends Component<ContactDataProps> {
           placeholder: "ZIP Code",
         },
         value: "",
+        validation: {
+          required: true,
+          minLength: 5,
+          maxLength: 5,
+        },
+        valid: false,
+        touched: false,
       },
       country: {
         elementType: "input",
@@ -129,6 +124,11 @@ class ContactData extends Component<ContactDataProps> {
           placeholder: "Country",
         },
         value: "",
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       email: {
         elementType: "input",
@@ -137,6 +137,11 @@ class ContactData extends Component<ContactDataProps> {
           placeholder: "Your Email",
         },
         value: "",
+        validation: {
+          required: true,
+        },
+        valid: false,
+        touched: false,
       },
       deliveryMethod: {
         elementType: "select",
@@ -146,29 +151,26 @@ class ContactData extends Component<ContactDataProps> {
             { value: "cheapest", displayValue: "Cheapest" },
           ],
         },
-        value: "",
+        value: "fastest",
       },
     },
     loading: false,
   };
 
-  orderHandler = (e?: Event) => {
-    e!.preventDefault();
+  orderHandler = (e: React.SyntheticEvent) => {
+    e.preventDefault();
     this.setState({ loading: true });
+    const formData = {} as FormData;
+    for (let formElementIdentifier in this.state.orderForm) {
+      formData[formElementIdentifier] =
+        this.state.orderForm[formElementIdentifier].value;
+    }
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.price,
-      customer: {
-        name: "Paulius",
-        address: {
-          street: "Teststreet 1",
-          zipCode: "48624",
-          country: "LT",
-        },
-        email: "test@test.com",
-      },
-      deliveryMethod: "fastest",
+      orderData: formData,
     };
+    console.log(order);
     axios
       .post("/orders.json", order)
       .then((response) => {
@@ -176,6 +178,43 @@ class ContactData extends Component<ContactDataProps> {
         this.props.navigate("/");
       })
       .catch((err) => this.setState({ loading: false }));
+  };
+
+  checkValidity(value: string, rules: Validation): boolean {
+    let isValid = true;
+
+    if (rules.required) {
+      isValid = value.trim() !== "" && isValid;
+    }
+    if (rules.minLength) {
+      isValid = value.length >= rules.minLength && isValid;
+    }
+    if (rules.maxLength) {
+      isValid = value.length <= rules.maxLength && isValid;
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (e: Event, inputIdentifier: string) => {
+    const target = e.target as HTMLInputElement;
+    const updatedOrderForm = {
+      ...this.state.orderForm,
+    };
+    const updatedFormElement = {
+      ...updatedOrderForm[inputIdentifier],
+    };
+    updatedFormElement.value = target.value;
+    if (target.tagName === "INPUT") {
+      updatedFormElement.valid = this.checkValidity(
+        updatedFormElement.value,
+        updatedFormElement.validation!
+      );
+      updatedFormElement.touched = true;
+    }
+    console.log(updatedFormElement);
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+    this.setState({ orderForm: updatedOrderForm });
   };
 
   render() {
@@ -186,23 +225,27 @@ class ContactData extends Component<ContactDataProps> {
         config: this.state.orderForm[key],
       });
     }
-    console.log(formElementsArray)
 
     let form: JSX.Element = (
-      <form>
+      <form onSubmit={this.orderHandler}>
         {formElementsArray.map((formElement) => {
-          // console.log(Form)
-          return <Input
-            elementType={formElement.config.elementType}
-            key={formElement.id}
-            elementConfig={formElement.config.elementConfig}
-            value={formElement.config.value}
-          />;
+          return (
+            <Input
+              shouldValidate={formElement.config.validation ? true : false}
+              invalid={!formElement.config.valid}
+              changed={(e?: Event) =>
+                this.inputChangedHandler(e!, formElement.id)
+              }
+              elementType={formElement.config.elementType}
+              key={formElement.id}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.value}
+              touched={formElement.config.touched ? true : false}
+            />
+          );
         })}
-        < Button btnType="Success" clicked={this.orderHandler}>
-          ORDER
-        </Button>
-      </form >
+        <Button btnType="Success">ORDER</Button>
+      </form>
     );
 
     if (this.state.loading) {
