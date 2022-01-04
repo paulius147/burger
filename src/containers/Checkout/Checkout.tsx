@@ -32,6 +32,7 @@ const Checkout = () => {
     }
     setIngredients(paramIngredients);
     setTotalPrice(price);
+    // eslint-disable-next-line
   }, []);
 
   const checkoutContinuedHandler = () => {
