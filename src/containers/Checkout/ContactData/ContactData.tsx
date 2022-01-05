@@ -6,7 +6,7 @@ import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import { connect } from "react-redux";
-import { InitialState } from "../../../store/reducer";
+import { InitialState } from "../../../store/reducers/burgerBuilder";
 
 interface ContactDataProps {
   ings: IngredientsType;

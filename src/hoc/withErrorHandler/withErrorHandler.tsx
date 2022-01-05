@@ -23,21 +23,6 @@ export function withErrorHandler<T extends Props = Props>(
       error: undefined,
     };
 
-    // constructor(props: WithErrorHandlerProps) {
-    // super(props);
-    // this.reqInterceptor = axios.interceptors.request.use((req) => {
-    //   this.setState({ error: undefined });
-    //   return req;
-    // });
-    // this.respInterceptor = axios.interceptors.response.use(
-    //   undefined,
-    //   (error) => {
-    //     this.setState({ error: error });
-    //     return Promise.reject(error);
-    //   }
-    // );
-    // }
-
     componentDidMount() {
       this.reqInterceptor = axios.interceptors.request.use((req) => {
         this.setState({ error: undefined });

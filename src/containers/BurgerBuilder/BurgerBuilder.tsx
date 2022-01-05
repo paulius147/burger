@@ -8,16 +8,20 @@ import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import { withErrorHandler } from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
-import * as actionTypes from "../../store/actions";
-import { Dispatch } from "redux";
-import { InitialState } from "../../store/reducer";
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import { InitialState } from "../../store/reducers/burgerBuilder";
 import { useNavigate } from "react-router-dom";
+import * as burgerBuilderActions from "../../store/actions/index";
+import { AxiosInstance } from "axios";
 
 export interface Props {
   ings: IngredientsType;
   price: number;
+  error: boolean;
   onIngredientAdded(): AddRemoveAction;
   onIngredientRemoved(): AddRemoveAction;
+  onInitIngredients(): AxiosInstance;
 }
 
 export interface IngredientsType {
@@ -56,23 +60,13 @@ const DISABLED_INFO: DisabledInfo = {
 
 const BurgerBuilder = (props: Props) => {
   const [purchasing, setPurchasing] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   axios
-  //     .get(
-  //       "https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json"
-  //     )
-  //     .then((response) => {
-  //       // this.setState({ ingredients: response.data);
-  //     })
-  //     .catch((err) => {
-  //       setError(true);
-  //     });
-  // }, []);
+  useEffect(() => {
+    props.onInitIngredients();
+    // eslint-disable-next-line
+  }, []);
 
   const updatePurchaseState = (ingredients: IngredientsType): boolean => {
     const sum = Object.keys(ingredients)
@@ -103,7 +97,7 @@ const BurgerBuilder = (props: Props) => {
   }
 
   let orderSummary = null;
-  let burger = error ? <p>Ingredients can't be loaded</p> : <Spinner />;
+  let burger = props.error ? <p>Ingredients can't be loaded</p> : <Spinner />;
   if (props.ings) {
     burger = (
       <Aux>
@@ -127,9 +121,6 @@ const BurgerBuilder = (props: Props) => {
       />
     );
   }
-  if (loading) {
-    orderSummary = <Spinner />;
-  }
 
   return (
     <Aux>
@@ -145,21 +136,19 @@ const mapStateToProps = (state: InitialState) => {
   return {
     ings: state.ingredients,
     price: state.totalPrice,
+    error: state.error,
   };
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<InitialState, void, Action>
+) => {
   return {
     onIngredientAdded: (ingName: string) =>
-      dispatch({
-        type: actionTypes.ADD_INGREDIENT,
-        ingredientName: ingName,
-      }),
+      dispatch(burgerBuilderActions.addIngredient(ingName)),
     onIngredientRemoved: (ingName: string) =>
-      dispatch({
-        type: actionTypes.REMOVE_INGREDIENT,
-        ingredientName: ingName,
-      }),
+      dispatch(burgerBuilderActions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
   };
 };
 

@@ -1,14 +1,16 @@
-import { IngredientsType } from "../containers/BurgerBuilder/BurgerBuilder";
-import * as actionTypes from "./actions";
+import { IngredientsType } from "../../containers/BurgerBuilder/BurgerBuilder";
+import * as actionTypes from "../actions/actionTypes";
 
 export interface InitialState {
   ingredients: IngredientsType;
   totalPrice: number;
+  error: boolean;
 }
 
 interface Action {
   type: string;
   ingredientName: string;
+  ingredients: IngredientsType;
 }
 
 const initialState = {
@@ -19,6 +21,7 @@ const initialState = {
     meat: 0,
   },
   totalPrice: 4,
+  error: false,
 };
 
 const INGREDIENT_PRICES: IngredientsType = {
@@ -47,6 +50,17 @@ const reducer = (state: InitialState = initialState, action: Action) => {
           [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
         },
         totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
+      };
+    case actionTypes.SET_INGREDIENTS:
+      return {
+        ...state,
+        ingredients: action.ingredients,
+        error: false,
+      };
+    case actionTypes.FETCH_INGREDIENTS_FAILED:
+      return {
+        ...state,
+        error: true,
       };
     default:
       return state;

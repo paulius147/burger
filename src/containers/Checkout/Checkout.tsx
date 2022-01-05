@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import CheckoutSummary from "../../components/Order/CheckoutSummary/CheckoutSummary";
 import { IngredientsType } from "../BurgerBuilder/BurgerBuilder";
 import { useNavigate, Route, Routes } from "react-router-dom";
 import ContactData from "./ContactData/ContactData";
 import { connect } from "react-redux";
-import { InitialState } from "../../store/reducer";
+import { InitialState } from "../../store/reducers/burgerBuilder";
 
 interface CheckOutProps {
   ings: IngredientsType;
