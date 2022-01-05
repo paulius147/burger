@@ -5,9 +5,11 @@ import classes from "./ContactData.module.css";
 import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
+import { connect } from "react-redux";
+import { InitialState } from "../../../store/reducer";
 
 interface ContactDataProps {
-  ingredients: IngredientsType;
+  ings: IngredientsType;
   price: number | string;
   navigate(arg: string): void;
 }
@@ -169,7 +171,7 @@ class ContactData extends Component<ContactDataProps> {
         this.state.orderForm[formElementIdentifier].value;
     }
     const order = {
-      ingredients: this.props.ingredients,
+      ingredients: this.props.ings,
       price: this.props.price,
       orderData: formData,
     };
@@ -268,4 +270,11 @@ class ContactData extends Component<ContactDataProps> {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state: InitialState) => {
+  return {
+    ings: state.ingredients,
+    price: state.totalPrice,
+  };
+};
+
+export default connect(mapStateToProps)(ContactData);

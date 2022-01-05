@@ -2,22 +2,18 @@ import React, { Component } from "react";
 import { AxiosInstance, AxiosError } from "axios";
 import Modal from "../../components/UI/Modal/Modal";
 import Aux from "../Auxiliary/Auxiliary";
-import { NavigateFunction } from "react-router-dom";
+import { Props } from "../../containers/BurgerBuilder/BurgerBuilder";
 
 type WithErrorHandlerState = {
   error: AxiosError | undefined;
 };
 
-interface WithErrorHandlerProps {
-  navigateTo?: NavigateFunction;
-}
-
-const withErrorHandler = (
-  WrappedComponent: React.ComponentType,
+export function withErrorHandler<T extends Props = Props>(
+  WrappedComponent: React.ComponentType<T>,
   axios: AxiosInstance
-) => {
+) {
   return class WithErrorHandler extends Component<
-    WithErrorHandlerProps,
+    Omit<T, keyof Props>,
     WithErrorHandlerState
   > {
     reqInterceptor: number | undefined = undefined;
@@ -76,11 +72,11 @@ const withErrorHandler = (
           >
             {this.state.error ? this.state.error.message : null}
           </Modal>
-          <WrappedComponent {...this.props} />
+          <WrappedComponent {...(this.props as T)} />
         </Aux>
       );
     }
   };
-};
+}
 
-export default withErrorHandler;
+// export default withErrorHandler;

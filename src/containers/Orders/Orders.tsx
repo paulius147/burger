@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import Order from "../../components/Order/Order";
 import axios from "../../axios-orders";
-import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
+import { withErrorHandler } from "../../hoc/withErrorHandler/withErrorHandler";
+import { Props } from "../../containers/BurgerBuilder/BurgerBuilder";
 
 interface IOrder {
   customer: {
@@ -29,7 +30,7 @@ interface OrdersState {
   orders: IOrder[];
 }
 
-class Orders extends Component {
+class Orders extends Component<Props> {
   state: OrdersState = {
     loading: true,
     orders: [],
