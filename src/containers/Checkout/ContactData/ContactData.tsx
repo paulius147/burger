@@ -6,12 +6,18 @@ import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import { connect } from "react-redux";
-import { InitialState } from "../../../store/reducers/burgerBuilder";
+import { BurgerBuilderInitialState } from "../../../store/reducers/burgerBuilder";
+import { withErrorHandler } from "../../../hoc/withErrorHandler/withErrorHandler";
+import { Props } from "../../BurgerBuilder/BurgerBuilder";
+import * as actions from "../../../store/actions/index";
+import { Action } from "redux";
+import { ThunkDispatch } from "redux-thunk";
+import { OrdersInitialState } from "../../../store/reducers/order";
 
-interface ContactDataProps {
-  ings: IngredientsType;
-  price: number | string;
-  navigate(arg: string): void;
+export interface OrderData {
+  ingredients: IngredientsType;
+  price: string;
+  orderData: FormData;
 }
 
 interface Validation {
@@ -52,7 +58,7 @@ export interface Options {
   options: DeliveryOptions[];
 }
 
-interface FormData {
+export interface FormData {
   country: string;
   deliveryMethod: string;
   email: string;
@@ -72,11 +78,10 @@ interface ContactDataState {
     deliveryMethod: DeliveryMethod;
     [key: string]: OrderFormKey | DeliveryMethod;
   };
-  loading: boolean;
   formIsValid: boolean;
 }
 
-class ContactData extends Component<ContactDataProps> {
+class ContactData extends Component<Props> {
   state: ContactDataState = {
     orderForm: {
       name: {
@@ -158,7 +163,6 @@ class ContactData extends Component<ContactDataProps> {
         valid: true,
       },
     },
-    loading: false,
     formIsValid: false,
   };
 
@@ -172,16 +176,11 @@ class ContactData extends Component<ContactDataProps> {
     }
     const order = {
       ingredients: this.props.ings,
-      price: this.props.price,
+      price: this.props.price.toFixed(2),
       orderData: formData,
     };
-    axios
-      .post("/orders.json", order)
-      .then((response) => {
-        this.setState({ loading: false });
-        this.props.navigate("/");
-      })
-      .catch((err) => this.setState({ loading: false }));
+
+    this.props.onOrderBurger(order);
   };
 
   checkValidity(value: string, rules: Validation): boolean {
@@ -257,7 +256,7 @@ class ContactData extends Component<ContactDataProps> {
       </form>
     );
 
-    if (this.state.loading) {
+    if (this.props.loading) {
       form = <Spinner />;
     }
 
@@ -270,11 +269,27 @@ class ContactData extends Component<ContactDataProps> {
   }
 }
 
-const mapStateToProps = (state: InitialState) => {
+const mapStateToProps = (state: {
+  burgerBuilder: BurgerBuilderInitialState;
+  order: OrdersInitialState;
+}) => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice,
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    loading: state.order.loading,
   };
 };
 
-export default connect(mapStateToProps)(ContactData);
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<OrdersInitialState, void, Action>
+) => {
+  return {
+    onOrderBurger: (orderData: OrderData) =>
+      dispatch(actions.purchaseBurger(orderData)),
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withErrorHandler(ContactData, axios));

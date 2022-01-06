@@ -1,7 +1,7 @@
 import { IngredientsType } from "../../containers/BurgerBuilder/BurgerBuilder";
 import * as actionTypes from "../actions/actionTypes";
 
-export interface InitialState {
+export interface BurgerBuilderInitialState {
   ingredients: IngredientsType;
   totalPrice: number;
   error: boolean;
@@ -31,7 +31,10 @@ const INGREDIENT_PRICES: IngredientsType = {
   bacon: 0.7,
 };
 
-const reducer = (state: InitialState = initialState, action: Action) => {
+const reducer = (
+  state: BurgerBuilderInitialState = initialState,
+  action: Action
+) => {
   switch (action.type) {
     case actionTypes.ADD_INGREDIENT:
       return {
@@ -56,6 +59,7 @@ const reducer = (state: InitialState = initialState, action: Action) => {
         ...state,
         ingredients: action.ingredients,
         error: false,
+        totalPrice: 4,
       };
     case actionTypes.FETCH_INGREDIENTS_FAILED:
       return {

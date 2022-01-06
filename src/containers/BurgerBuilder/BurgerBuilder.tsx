@@ -10,10 +10,12 @@ import { withErrorHandler } from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
-import { InitialState } from "../../store/reducers/burgerBuilder";
+import { BurgerBuilderInitialState } from "../../store/reducers/burgerBuilder";
 import { useNavigate } from "react-router-dom";
-import * as burgerBuilderActions from "../../store/actions/index";
+import * as actions from "../../store/actions/index";
 import { AxiosInstance } from "axios";
+import { OrderData } from "../Checkout/ContactData/ContactData";
+import { Order } from "../../store/reducers/order";
 
 export interface Props {
   ings: IngredientsType;
@@ -22,6 +24,11 @@ export interface Props {
   onIngredientAdded(): AddRemoveAction;
   onIngredientRemoved(): AddRemoveAction;
   onInitIngredients(): AxiosInstance;
+  onOrderBurger(order: OrderData): AxiosInstance;
+  loading: boolean;
+  onPurchaseInit(): { type: string };
+  onFetchOrders(): AxiosInstance;
+  orders: Order[];
 }
 
 export interface IngredientsType {
@@ -84,6 +91,7 @@ const BurgerBuilder = (props: Props) => {
   };
 
   const purchaseContinueHandler = () => {
+    props.onPurchaseInit();
     navigate("/checkout");
   };
 
@@ -132,23 +140,26 @@ const BurgerBuilder = (props: Props) => {
   );
 };
 
-const mapStateToProps = (state: InitialState) => {
+const mapStateToProps = (state: {
+  burgerBuilder: BurgerBuilderInitialState;
+}) => {
   return {
-    ings: state.ingredients,
-    price: state.totalPrice,
-    error: state.error,
+    ings: state.burgerBuilder.ingredients,
+    price: state.burgerBuilder.totalPrice,
+    error: state.burgerBuilder.error,
   };
 };
 
 const mapDispatchToProps = (
-  dispatch: ThunkDispatch<InitialState, void, Action>
+  dispatch: ThunkDispatch<BurgerBuilderInitialState, void, Action>
 ) => {
   return {
     onIngredientAdded: (ingName: string) =>
-      dispatch(burgerBuilderActions.addIngredient(ingName)),
+      dispatch(actions.addIngredient(ingName)),
     onIngredientRemoved: (ingName: string) =>
-      dispatch(burgerBuilderActions.removeIngredient(ingName)),
-    onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
+      dispatch(actions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(actions.initIngredients()),
+    onPurchaseInit: () => dispatch(actions.purchaseInit()),
   };
 };
 
