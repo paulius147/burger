@@ -63,5 +63,3 @@ export function withErrorHandler<T extends Props = Props>(
     }
   };
 }
-
-// export default withErrorHandler;

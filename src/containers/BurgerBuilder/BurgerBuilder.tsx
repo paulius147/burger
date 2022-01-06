@@ -39,12 +39,6 @@ export interface IngredientsType {
   [key: string]: number;
 }
 
-export interface BurgerBuilderState {
-  purchasing: boolean;
-  loading: boolean;
-  error: boolean;
-}
-
 interface AddRemoveAction {
   type: string;
   ingredientName: string;

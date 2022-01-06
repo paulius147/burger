@@ -20,13 +20,13 @@ export interface OrderData {
   orderData: FormData;
 }
 
-interface Validation {
+export interface Validation {
   required: boolean;
   minLength?: number;
   maxLength?: number;
 }
 
-interface OrderFormKey {
+export interface OrderFormKey {
   elementType: string;
   elementConfig: OrderConfig;
   value: string;

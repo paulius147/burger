@@ -6,8 +6,6 @@ import ContactData from "./ContactData/ContactData";
 import { connect } from "react-redux";
 import { BurgerBuilderInitialState } from "../../store/reducers/burgerBuilder";
 import { Navigate } from "react-router-dom";
-// import { Dispatch } from "redux";
-// import * as actions from "../../store/actions/index";
 import { OrdersInitialState } from "../../store/reducers/order";
 
 interface CheckOutProps {

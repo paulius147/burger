@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import classes from "./Modal.module.css";
 import Backdrop from "../Backdrop/Backdrop";
 import Aux from "../../../hoc/Auxiliary/Auxiliary";
-import { BurgerBuilderState } from "../../../containers/BurgerBuilder/BurgerBuilder";
 
 interface ModalProps {
   children: React.ReactNode;
@@ -11,7 +10,7 @@ interface ModalProps {
 }
 
 class Modal extends Component<ModalProps> {
-  shouldComponentUpdate(nextProps: ModalProps, nextState: BurgerBuilderState) {
+  shouldComponentUpdate(nextProps: ModalProps) {
     return (
       nextProps.show !== this.props.show ||
       nextProps.children !== this.props.children
