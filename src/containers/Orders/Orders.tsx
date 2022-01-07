@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import axios from "../../axios-orders";
 import OrderC from "../../components/Order/Order";
 import { withErrorHandler } from "../../hoc/withErrorHandler/withErrorHandler";
@@ -9,41 +9,45 @@ import * as actions from "../../store/actions/index";
 import { Order, OrdersInitialState } from "../../store/reducers/order";
 import { Action } from "redux";
 import Spinner from "../../components/UI/Spinner/Spinner";
+import { AuthInitialState } from "../../store/reducers/auth";
 
-class Orders extends Component<Props> {
-  componentDidMount() {
-    this.props.onFetchOrders();
+const Orders = (props: Props) => {
+  useEffect(() => {
+    props.onFetchOrders(props.token);
+    // eslint-disable-next-line
+  }, []);
+
+  let orders = <Spinner />;
+  if (!props.loading) {
+    orders = (
+      <div>
+        {props.orders.length === 0 ? (
+          <p>No Orders.</p>
+        ) : (
+          props.orders.map((order: Order) => {
+            return (
+              <OrderC
+                key={order.id}
+                ingredients={order.ingredients}
+                price={+order.price}
+              />
+            );
+          })
+        )}
+      </div>
+    );
   }
+  return orders;
+};
 
-  render() {
-    let orders = <Spinner />;
-    if (!this.props.loading) {
-      orders = (
-        <div>
-          {this.props.orders.length === 0 ? (
-            <p>No Orders.</p>
-          ) : (
-            this.props.orders.map((order: Order) => {
-              return (
-                <OrderC
-                  key={order.id}
-                  ingredients={order.ingredients}
-                  price={+order.price}
-                />
-              );
-            })
-          )}
-        </div>
-      );
-    }
-    return orders;
-  }
-}
-
-const mapStateToProps = (state: { order: OrdersInitialState }) => {
+const mapStateToProps = (state: {
+  order: OrdersInitialState;
+  auth: AuthInitialState;
+}) => {
   return {
     orders: state.order.orders,
     loading: state.order.loading,
+    token: state.auth.token,
   };
 };
 
@@ -51,7 +55,7 @@ const mapDispatchToProps = (
   dispatch: ThunkDispatch<OrdersInitialState, void, Action>
 ) => {
   return {
-    onFetchOrders: () => dispatch(actions.fetchOrders()),
+    onFetchOrders: (token: string) => dispatch(actions.fetchOrders(token)),
   };
 };
 

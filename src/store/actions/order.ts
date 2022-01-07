@@ -25,11 +25,11 @@ export const purchaseBurgerStart = () => {
   };
 };
 
-export const purchaseBurger = (orderData: OrderData) => {
+export const purchaseBurger = (orderData: OrderData, token: string) => {
   return (dispatch: Dispatch) => {
     dispatch(purchaseBurgerStart());
     axios
-      .post("/orders.json", orderData)
+      .post("/orders.json?auth=" + token, orderData)
       .then((response) => {
         dispatch(purchaseBurgerSuccess(response.data.name, orderData));
       })
@@ -65,12 +65,13 @@ export const fetchOrdersStart = () => {
   };
 };
 
-export const fetchOrders = () => {
+export const fetchOrders = (token: string) => {
   return (dispatch: Dispatch) => {
     dispatch(fetchOrdersStart());
     axios
       .get(
-        "https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/orders.json"
+        "https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/orders.json?auth=" +
+          token
       )
       .then((res) => {
         const fetchedOrders = [];

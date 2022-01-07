@@ -13,6 +13,7 @@ import * as actions from "../../../store/actions/index";
 import { Action } from "redux";
 import { ThunkDispatch } from "redux-thunk";
 import { OrdersInitialState } from "../../../store/reducers/order";
+import { AuthInitialState } from "../../../store/reducers/auth";
 
 export interface OrderData {
   ingredients: IngredientsType;
@@ -180,7 +181,7 @@ class ContactData extends Component<Props> {
       orderData: formData,
     };
 
-    this.props.onOrderBurger(order);
+    this.props.onOrderBurger(order, this.props.token);
   };
 
   checkValidity(value: string, rules: Validation): boolean {
@@ -272,11 +273,13 @@ class ContactData extends Component<Props> {
 const mapStateToProps = (state: {
   burgerBuilder: BurgerBuilderInitialState;
   order: OrdersInitialState;
+  auth: AuthInitialState;
 }) => {
   return {
     ings: state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
     loading: state.order.loading,
+    token: state.auth.token,
   };
 };
 
@@ -284,8 +287,8 @@ const mapDispatchToProps = (
   dispatch: ThunkDispatch<OrdersInitialState, void, Action>
 ) => {
   return {
-    onOrderBurger: (orderData: OrderData) =>
-      dispatch(actions.purchaseBurger(orderData)),
+    onOrderBurger: (orderData: OrderData, token: string) =>
+      dispatch(actions.purchaseBurger(orderData, token)),
   };
 };
 

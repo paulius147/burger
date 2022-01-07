@@ -24,11 +24,12 @@ export interface Props {
   onIngredientAdded(): AddRemoveAction;
   onIngredientRemoved(): AddRemoveAction;
   onInitIngredients(): AxiosInstance;
-  onOrderBurger(order: OrderData): AxiosInstance;
+  onOrderBurger(order: OrderData, token: string): AxiosInstance;
   loading: boolean;
   onPurchaseInit(): { type: string };
-  onFetchOrders(): AxiosInstance;
+  onFetchOrders(token: string): AxiosInstance;
   orders: Order[];
+  token: string;
 }
 
 export interface IngredientsType {

@@ -7,9 +7,13 @@ import * as actions from "../../store/actions/index";
 import { ThunkDispatch } from "redux-thunk";
 import { Action } from "redux";
 import { connect } from "react-redux";
+import Spinner from "../../components/UI/Spinner/Spinner";
+import { AuthInitialState } from "../../store/reducers/auth";
 
 interface AuthProps {
   onAuth(email: string, password: string, isSignup: boolean): void;
+  loading: boolean;
+  error: Error | null;
 }
 
 interface Controls {
@@ -111,10 +115,17 @@ const Auth = (props: AuthProps) => {
     />
   ));
 
+  let errorMessage = null;
+
+  if (props.error) {
+    errorMessage = <p>{props.error.message.replace(/_/g, " ")}</p>;
+  }
+
   return (
     <div className={classes.Auth}>
+      {errorMessage}
       <form onSubmit={submitHandler}>
-        {form}
+        {props.loading ? <Spinner /> : form}
         <Button btnType="Success">SUBMIT</Button>
       </form>
       <Button btnType="Danger" clicked={switchAuthHandler}>
@@ -122,6 +133,13 @@ const Auth = (props: AuthProps) => {
       </Button>
     </div>
   );
+};
+
+const mapStateToProps = (state: { auth: AuthInitialState }) => {
+  return {
+    loading: state.auth.loading,
+    error: state.auth.error,
+  };
 };
 
 const mapDispatchToProps = (
@@ -133,4 +151,4 @@ const mapDispatchToProps = (
   };
 };
 
-export default connect(null, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
