@@ -5,6 +5,7 @@ export interface BurgerBuilderInitialState {
   ingredients: IngredientsType;
   totalPrice: number;
   error: boolean;
+  building: boolean;
 }
 
 interface Action {
@@ -13,7 +14,7 @@ interface Action {
   ingredients: IngredientsType;
 }
 
-const initialState = {
+const initialState: BurgerBuilderInitialState = {
   ingredients: {
     salad: 0,
     bacon: 0,
@@ -22,6 +23,7 @@ const initialState = {
   },
   totalPrice: 4,
   error: false,
+  building: false,
 };
 
 const INGREDIENT_PRICES: IngredientsType = {
@@ -44,6 +46,7 @@ const reducer = (
           [action.ingredientName]: state.ingredients[action.ingredientName] + 1,
         },
         totalPrice: state.totalPrice + INGREDIENT_PRICES[action.ingredientName],
+        building: true,
       };
     case actionTypes.REMOVE_INGREDIENT:
       return {
@@ -53,6 +56,7 @@ const reducer = (
           [action.ingredientName]: state.ingredients[action.ingredientName] - 1,
         },
         totalPrice: state.totalPrice - INGREDIENT_PRICES[action.ingredientName],
+        building: true,
       };
     case actionTypes.SET_INGREDIENTS:
       return {
@@ -60,6 +64,7 @@ const reducer = (
         ingredients: action.ingredients,
         error: false,
         totalPrice: 4,
+        building: false,
       };
     case actionTypes.FETCH_INGREDIENTS_FAILED:
       return {

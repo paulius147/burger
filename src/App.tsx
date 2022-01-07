@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "./hoc/Layout/Layout";
 import BurgerBuilder from "./containers/BurgerBuilder/BurgerBuilder";
 import { Route, Routes } from "react-router-dom";
 import Checkout from "./containers/Checkout/Checkout";
 import Orders from "./containers/Orders/Orders";
 import Auth from "./containers/Auth/Auth";
+import Logout from "./containers/Auth/Logout/Logout";
+import { connect } from "react-redux";
+import { Action } from "redux";
+import * as actions from "./store/actions/index";
+import { AuthInitialState } from "./store/reducers/auth";
+import { ThunkDispatch } from "redux-thunk";
 
-const App = () => {
+interface AppProps {
+  onTryAutoSignup(): void;
+}
+
+const App = (props: AppProps) => {
+  useEffect(() => {
+    props.onTryAutoSignup();
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <div>
       <Layout>
@@ -14,6 +29,7 @@ const App = () => {
           <Route path="/checkout/*" element={<Checkout />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/logout" element={<Logout />} />
           <Route path="/" element={<BurgerBuilder />} />
         </Routes>
       </Layout>
@@ -21,4 +37,12 @@ const App = () => {
   );
 };
 
-export default App;
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<AuthInitialState, void, Action>
+) => {
+  return {
+    onTryAutoSignup: () => dispatch(actions.authCheckState()),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(App);

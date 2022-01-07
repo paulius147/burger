@@ -5,6 +5,7 @@ export interface AuthActions {
   idToken: string;
   userId: string;
   error: Error;
+  path: string;
 }
 
 export interface AuthInitialState {
@@ -12,13 +13,15 @@ export interface AuthInitialState {
   userId: string | null;
   error: Error | null;
   loading: boolean;
+  authRedirectPath: string;
 }
 
-const initialState = {
+const initialState: AuthInitialState = {
   token: null,
   userId: null,
   error: null,
   loading: false,
+  authRedirectPath: "/",
 };
 
 const reducer = (
@@ -51,6 +54,11 @@ const reducer = (
         ...state,
         token: null,
         userId: null,
+      };
+    case actionTypes.SET_AUTH_REDIRECT_PATH:
+      return {
+        ...state,
+        authRedirectPath: action.path,
       };
     default:
       return state;

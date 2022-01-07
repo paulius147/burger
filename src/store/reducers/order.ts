@@ -25,7 +25,7 @@ export interface OrdersInitialState {
   purchased: boolean;
 }
 
-const initialState = {
+const initialState: OrdersInitialState = {
   orders: [],
   loading: false,
   purchased: false,

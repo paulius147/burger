@@ -16,6 +16,7 @@ import * as actions from "../../store/actions/index";
 import { AxiosInstance } from "axios";
 import { OrderData } from "../Checkout/ContactData/ContactData";
 import { Order } from "../../store/reducers/order";
+import { AuthInitialState } from "../../store/reducers/auth";
 
 export interface Props {
   ings: IngredientsType;
@@ -30,6 +31,8 @@ export interface Props {
   onFetchOrders(token: string): AxiosInstance;
   orders: Order[];
   token: string;
+  isAuthenticated: boolean;
+  onSetAuthRedirectPath(path: string): { type: string; path: string };
 }
 
 export interface IngredientsType {
@@ -78,7 +81,12 @@ const BurgerBuilder = (props: Props) => {
   };
 
   const purchaseHandler = () => {
-    setPurchasing(true);
+    if (props.isAuthenticated) {
+      setPurchasing(true);
+    } else {
+      props.onSetAuthRedirectPath("/checkout");
+      navigate("/auth");
+    }
   };
 
   const purchaseCancelHandler = () => {
@@ -112,6 +120,7 @@ const BurgerBuilder = (props: Props) => {
           price={props.price}
           purchasable={updatePurchaseState(props.ings)}
           ordered={purchaseHandler}
+          isAuth={props.isAuthenticated}
         />
       </Aux>
     );
@@ -137,11 +146,13 @@ const BurgerBuilder = (props: Props) => {
 
 const mapStateToProps = (state: {
   burgerBuilder: BurgerBuilderInitialState;
+  auth: AuthInitialState;
 }) => {
   return {
     ings: state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
     error: state.burgerBuilder.error,
+    isAuthenticated: state.auth.token !== null,
   };
 };
 
@@ -155,6 +166,8 @@ const mapDispatchToProps = (
       dispatch(actions.removeIngredient(ingName)),
     onInitIngredients: () => dispatch(actions.initIngredients()),
     onPurchaseInit: () => dispatch(actions.purchaseInit()),
+    onSetAuthRedirectPath: (path: string) =>
+      dispatch(actions.setAuthRedirectPath(path)),
   };
 };
 

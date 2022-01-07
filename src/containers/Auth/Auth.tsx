@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
 import { OrderFormKey, Validation } from "../Checkout/ContactData/ContactData";
@@ -9,11 +9,17 @@ import { Action } from "redux";
 import { connect } from "react-redux";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import { AuthInitialState } from "../../store/reducers/auth";
+import { Navigate } from "react-router-dom";
+import { BurgerBuilderInitialState } from "../../store/reducers/burgerBuilder";
 
 interface AuthProps {
   onAuth(email: string, password: string, isSignup: boolean): void;
   loading: boolean;
   error: Error | null;
+  isAuthenticated: boolean;
+  buildingBurger: boolean;
+  authRedirectPath: string;
+  onSetAuthRedirectPath(): { type: string; path: string };
 }
 
 interface Controls {
@@ -23,6 +29,13 @@ interface Controls {
 }
 
 const Auth = (props: AuthProps) => {
+  useEffect(() => {
+    if (!props.buildingBurger && props.authRedirectPath !== "/") {
+      props.onSetAuthRedirectPath();
+    }
+    // eslint-disable-next-line
+  }, []);
+
   const [controls, setControls] = useState<Controls>({
     email: {
       elementType: "input",
@@ -121,8 +134,14 @@ const Auth = (props: AuthProps) => {
     errorMessage = <p>{props.error.message.replace(/_/g, " ")}</p>;
   }
 
+  let authRedicert = null;
+  if (props.isAuthenticated) {
+    authRedicert = <Navigate to={props.authRedirectPath} />;
+  }
+
   return (
     <div className={classes.Auth}>
+      {authRedicert}
       {errorMessage}
       <form onSubmit={submitHandler}>
         {props.loading ? <Spinner /> : form}
@@ -135,10 +154,16 @@ const Auth = (props: AuthProps) => {
   );
 };
 
-const mapStateToProps = (state: { auth: AuthInitialState }) => {
+const mapStateToProps = (state: {
+  auth: AuthInitialState;
+  burgerBuilder: BurgerBuilderInitialState;
+}) => {
   return {
     loading: state.auth.loading,
     error: state.auth.error,
+    isAuthenticated: state.auth.token !== null,
+    buildingBurger: state.burgerBuilder.building,
+    authRedirectPath: state.auth.authRedirectPath,
   };
 };
 
@@ -148,6 +173,7 @@ const mapDispatchToProps = (
   return {
     onAuth: (email: string, password: string, isSignup: boolean) =>
       dispatch(actions.auth(email, password, isSignup)),
+    onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath("/")),
   };
 };
 

@@ -10,6 +10,7 @@ interface BuildProps {
   price: number;
   purchasable: boolean;
   ordered(): void;
+  isAuth: boolean;
 }
 
 interface Control {
@@ -44,7 +45,7 @@ const BuildControls = (props: BuildProps) => {
         onClick={props.ordered}
         disabled={!props.purchasable}
       >
-        ORDER NOW
+        {props.isAuth ? "ORDER NOW" : "SIGN UP TO ORDER"}
       </button>
     </div>
   );
