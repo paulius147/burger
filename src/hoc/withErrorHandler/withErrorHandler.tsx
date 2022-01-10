@@ -18,28 +18,33 @@ export function withErrorHandler<T extends Props = Props>(
   > {
     reqInterceptor: number | undefined = undefined;
     respInterceptor: number | undefined = undefined;
+    _isMounted = false;
 
     state: WithErrorHandlerState = {
       error: undefined,
     };
 
     componentDidMount() {
-      this.reqInterceptor = axios.interceptors.request.use((req) => {
-        this.setState({ error: undefined });
-        return req;
-      });
-      this.respInterceptor = axios.interceptors.response.use(
-        undefined,
-        (error) => {
-          this.setState({ error: error });
-          return Promise.reject(error);
-        }
-      );
+      this._isMounted = true;
+      if (this._isMounted) {
+        this.reqInterceptor = axios.interceptors.request.use((req) => {
+          this.setState({ error: undefined });
+          return req;
+        });
+        this.respInterceptor = axios.interceptors.response.use(
+          undefined,
+          (error) => {
+            this.setState({ error: error });
+            return Promise.reject(error);
+          }
+        );
+      }
     }
 
     componentWillUnmount() {
       axios.interceptors.request.eject(this.reqInterceptor as number);
       axios.interceptors.response.eject(this.respInterceptor as number);
+      this._isMounted = false;
     }
 
     errorConfirmHandler = () => {

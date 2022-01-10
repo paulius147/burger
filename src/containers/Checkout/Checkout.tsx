@@ -21,7 +21,7 @@ const Checkout = (props: CheckOutProps) => {
     navigate("/checkout/contact-data", { replace: true });
   };
   const checkoutCancelledHandler = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   let summary = <Navigate to="/" />;

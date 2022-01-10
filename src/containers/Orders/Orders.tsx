@@ -13,7 +13,8 @@ import { AuthInitialState } from "../../store/reducers/auth";
 
 const Orders = (props: Props) => {
   useEffect(() => {
-    props.onFetchOrders(props.token);
+    const token = localStorage.getItem("token")!;
+    props.onFetchOrders(token, props.userId);
     // eslint-disable-next-line
   }, []);
 
@@ -48,6 +49,7 @@ const mapStateToProps = (state: {
     orders: state.order.orders,
     loading: state.order.loading,
     token: state.auth.token,
+    userId: state.auth.userId,
   };
 };
 
@@ -55,7 +57,8 @@ const mapDispatchToProps = (
   dispatch: ThunkDispatch<OrdersInitialState, void, Action>
 ) => {
   return {
-    onFetchOrders: (token: string) => dispatch(actions.fetchOrders(token)),
+    onFetchOrders: (token: string, userId: string) =>
+      dispatch(actions.fetchOrders(token, userId)),
   };
 };
 

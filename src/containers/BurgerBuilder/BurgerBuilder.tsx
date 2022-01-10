@@ -28,11 +28,12 @@ export interface Props {
   onOrderBurger(order: OrderData, token: string): AxiosInstance;
   loading: boolean;
   onPurchaseInit(): { type: string };
-  onFetchOrders(token: string): AxiosInstance;
+  onFetchOrders(token: string, userId: string): AxiosInstance;
   orders: Order[];
   token: string;
   isAuthenticated: boolean;
   onSetAuthRedirectPath(path: string): { type: string; path: string };
+  userId: string;
 }
 
 export interface IngredientsType {

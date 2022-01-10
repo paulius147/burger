@@ -65,13 +65,13 @@ export const fetchOrdersStart = () => {
   };
 };
 
-export const fetchOrders = (token: string) => {
+export const fetchOrders = (token: string, userId: string) => {
   return (dispatch: Dispatch) => {
     dispatch(fetchOrdersStart());
+    const queryParams = `?auth=${token}&orderBy="userId"&equalTo="${userId}"`;
     axios
       .get(
-        "https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/orders.json?auth=" +
-          token
+        `https://reactts-burger-builder-project-default-rtdb.europe-west1.firebasedatabase.app/orders.json${queryParams}`
       )
       .then((res) => {
         const fetchedOrders = [];

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Layout from "./hoc/Layout/Layout";
 import BurgerBuilder from "./containers/BurgerBuilder/BurgerBuilder";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Checkout from "./containers/Checkout/Checkout";
 import Orders from "./containers/Orders/Orders";
 import Auth from "./containers/Auth/Auth";
@@ -14,6 +14,7 @@ import { ThunkDispatch } from "redux-thunk";
 
 interface AppProps {
   onTryAutoSignup(): void;
+  isAuthenticated: boolean;
 }
 
 const App = (props: AppProps) => {
@@ -31,10 +32,17 @@ const App = (props: AppProps) => {
           <Route path="/auth" element={<Auth />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/" element={<BurgerBuilder />} />
+          <Route path="/*" element={<Navigate to="/" />} />
         </Routes>
       </Layout>
     </div>
   );
+};
+
+const mapStateToProps = (state: { auth: AuthInitialState }) => {
+  return {
+    isAuthenticated: state.auth.token !== null,
+  };
 };
 
 const mapDispatchToProps = (
@@ -45,4 +53,4 @@ const mapDispatchToProps = (
   };
 };
 
-export default connect(null, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App);
