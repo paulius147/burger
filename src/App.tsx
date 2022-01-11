@@ -23,18 +23,29 @@ const App = (props: AppProps) => {
     // eslint-disable-next-line
   }, []);
 
+  let routes = (
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<BurgerBuilder />} />
+    </Routes>
+  );
+
+  if (props.isAuthenticated) {
+    routes = (
+      <Routes>
+        <Route path="/checkout/*" element={<Checkout />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/" element={<BurgerBuilder />} />
+        <Route path="/*" element={<Navigate to="/" />} />
+      </Routes>
+    );
+  }
+
   return (
     <div>
-      <Layout>
-        <Routes>
-          <Route path="/checkout/*" element={<Checkout />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/" element={<BurgerBuilder />} />
-          <Route path="/*" element={<Navigate to="/" />} />
-        </Routes>
-      </Layout>
+      <Layout>{routes}</Layout>
     </div>
   );
 };
